@@ -1,0 +1,64 @@
+rails g migration CreateTables attribute:type
+
+SESSIONS & LOGIN/////////////////////////////////////////////////////////////////////////
+get '/login' to: 'sessions#new'   -> def new action within SessionsController
+    || shows form to login -> will new a new.html.erb
+    || login_path
+
+post '/login', to: 'sessions#create' -> def create action within SessionsController
+    || creates session for user to stay logged in
+    || will need a redirect to user path
+    || user_path
+
+def create
+    user = User.find_by(username: params[:session][:username])
+    if user && user.authenticate(params[:session][:password])
+      session[:user_id] = user.id
+      redirect_to user
+    else
+      flash[:errors] = "Invalid Login"
+      render :new
+    end
+end
+
+def show #user_path
+  @user = User.find(params[:id])
+end
+
+USERS & CREATION /////////////////////////////////////////////////////////////////////////
+resources :users
+
+visit new_user_path
+
+#goes to new.html for form element
+def new #new_user_path
+  @user = User.new
+end
+
+# gets user info and creates new user
+# saves if valid else redirects
+def create
+  user = User.new(user_params)
+  if user.save
+    session[:user_id] = user.id
+    redirect_to user
+  else
+    flash[:errors] = user.errors.full_messages.join(", ")
+    render :new
+  end
+end
+
+
+
+LOGIN uses 'session[username]' NOT!!!! 'user[username]'
+
+
+
+<%= flash[:notice] %>
+
+<%= form_for(:session, url:login_path) do |f| %>
+  <%= f.text_field :username %>
+  <%= f.password_field :password %>
+
+  <%= f.submit "Login" %>
+<% end %>
