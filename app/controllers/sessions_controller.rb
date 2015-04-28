@@ -12,4 +12,10 @@ class SessionsController < ApplicationController
       render :new
     end
   end
+
+  def destroy
+    session.clear
+    flash[:notice] = "Successfully Logged Out"
+    redirect_to login_path
+  end
 end

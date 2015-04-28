@@ -25,6 +25,17 @@ def show #user_path
   @user = User.find(params[:id])
 end
 
+LOGOUT/////////////////////////////////
+
+<%= link_to "Logout", logout_path, method: :delete %>
+delete '/logout', to: 'sessions#destroy'
+
+def destroy
+  session.clear
+  flash[:notice] = "Successfully Logged Out"
+  redirect_to login_path
+end
+
 USERS & CREATION /////////////////////////////////////////////////////////////////////////
 resources :users
 
@@ -50,10 +61,12 @@ end
 
 
 
+
+
 LOGIN uses 'session[username]' NOT!!!! 'user[username]'
 
 
-
+FORM ELEMENTS/////////////////////////////////
 <%= flash[:notice] %>
 
 <%= form_for(:session, url:login_path) do |f| %>
